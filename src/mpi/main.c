@@ -5,38 +5,45 @@
 
 /* Monte Carlo Integration */
 
-#define THROW_COUNT 10000000
-double monteCarloIntegration() {
-    clock_t start = clock();
+#define NUM_THROWS 100000000 // 100 million
+// Number of processes defined in the Makefile
+
+double monteCarloIntegration(int throw_count) {
     MPI_Init(NULL, NULL);
+    MPI_Barrier(MPI_COMM_WORLD);
+    double start = MPI_Wtime();
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    printf("Hello, world! I am %d of %d\n", rank, size);
-    // int inside_circle = 0;
-    // for (int i = 0; i < THROW_COUNT; i++) {
-    //     double x = rand() / (double) RAND_MAX;
-    //     double y = rand() / (double) RAND_MAX;
-    //     if (x * x + y * y <= 1) {
-    //         inside_circle++;
-    //     }
-    // }
+    int inside_per_process = 0;
+    int throws_per_process = throw_count / size;
+    int throws_remainder = throw_count % size;
+    int throws = throws_per_process;
+    if (rank < throws_remainder) {
+      throws++;
+    }
+    srand(time(NULL) + rank);
+    for (int i = 0; i < throws; i++) {
+      double x = rand() / (double) RAND_MAX;
+      double y = rand() / (double) RAND_MAX;
+      if (x * x + y * y <= 1) {
+        inside_per_process++;
+      }
+    }
+    int total_inside_circle = 0;
+    MPI_Reduce(&inside_per_process, &total_inside_circle, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (rank == 0) {
+      double pi = (double) 4.0 * total_inside_circle / throw_count;
+      double end = MPI_Wtime();
+      printf("Spent %f seconds\n", end - start);
+      printf("Monte Carlo Integration: %f\n", pi);
+    }
     MPI_Finalize();
-    clock_t end = clock();
-    printf("Spent %f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
     // return (double) 4.0 * inside_circle / THROW_COUNT;
-    return 0.0;
 }
 
 int main() {
-  printf("Monte Carlo Integration: %f\n", monteCarloIntegration());
+  monteCarloIntegration(NUM_THROWS);
   return 0;
 }
-
-  // int rank, size;
-  // MPI_Init(&argc, &argv);
-  // MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  // MPI_Comm_size(MPI_COMM_WORLD, &size);
-  // printf("Hello, world! I am %d of %d\n", rank, size);
-  // MPI_Finalize();
-  // return 0;

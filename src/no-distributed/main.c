@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 
-/* Monte Carlo Integration */
+#define NUM_THROWS 100000000 // 100 million
 
 double monteCarloIntegration(int throw_count) {
     clock_t start = clock();
@@ -20,6 +20,6 @@ double monteCarloIntegration(int throw_count) {
 }
 
 int main() {
-  printf("Monte Carlo Integration: %f\n", monteCarloIntegration(100000000));
+  printf("Monte Carlo Integration: %f\n", monteCarloIntegration(NUM_THROWS));
   return 0;
 }

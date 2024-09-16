@@ -3,10 +3,13 @@
 #include <time.h>
 #include <omp.h>
 
+#define NUM_THREADS 4
+#define NUM_THROWS 100000000 // 100 million
+
 /* Monte Carlo Integration */
 
 double monteCarloIntegration(int throw_count) {
-    clock_t start = clock();
+    double start = omp_get_wtime();
     int inside_circle = 0;
 
     // Seed the random number generator for each thread
@@ -26,13 +29,13 @@ double monteCarloIntegration(int throw_count) {
         }
     }
 
-    clock_t end = clock();
-    printf("Spent %f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+    double end = omp_get_wtime();
+    printf("Spent %f seconds\n", end - start);
     return (double) 4.0 * inside_circle / throw_count;
 }
 
 int main() {
-    int throw_count = 100000000;
-    printf("Monte Carlo Integration: %f\n", monteCarloIntegration(throw_count));
+    omp_set_num_threads(NUM_THREADS);
+    printf("Monte Carlo Integration: %f\n", monteCarloIntegration(NUM_THROWS));
     return 0;
 }
