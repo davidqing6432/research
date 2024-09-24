@@ -18,7 +18,7 @@ double monteCarloIntegration(int throw_count) {
     // Parallelize using OpenMP with reduction to sum up the count of points inside the circle
     #pragma omp parallel private(seed) reduction(+:inside_circle)
     {
-        seed = time(NULL) ^ omp_get_thread_num(); // Unique seed for each thread
+        seed = omp_get_thread_num() + 1; // Unique non-zero seed for each thread
         #pragma omp for
         for (int i = 0; i < throw_count; i++) {
             double x = rand_r(&seed) / (double) RAND_MAX;

@@ -7,6 +7,7 @@
 
 #define NUM_THROWS 100000000 // 100 million
 // Number of processes defined in the Makefile
+// Identify if threads or processes
 
 double monteCarloIntegration(int throw_count) {
     MPI_Init(NULL, NULL);
@@ -15,6 +16,7 @@ double monteCarloIntegration(int throw_count) {
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    int seed = rank + 1; // Unique non-zero seed
     int inside_per_process = 0;
     int throws_per_process = throw_count / size;
     int throws_remainder = throw_count % size;
@@ -22,10 +24,9 @@ double monteCarloIntegration(int throw_count) {
     if (rank < throws_remainder) {
       throws++;
     }
-    srand(time(NULL) + rank);
     for (int i = 0; i < throws; i++) {
-      double x = rand() / (double) RAND_MAX;
-      double y = rand() / (double) RAND_MAX;
+      double x = rand_r(&seed) / (double) RAND_MAX;
+      double y = rand_r(&seed) / (double) RAND_MAX;
       if (x * x + y * y <= 1) {
         inside_per_process++;
       }

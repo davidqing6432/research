@@ -3,13 +3,16 @@
 #include <time.h>
 
 #define NUM_THROWS 100000000 // 100 million
+// Explore whether this is using forks or multi-threading
+// Run for extended period of time, how many processes are created.
 
 double monteCarloIntegration(int throw_count) {
+    int seed = 1;
     clock_t start = clock();
     int inside_circle = 0;
     for (int i = 0; i < throw_count; i++) {
-        double x = rand() / (double) RAND_MAX;
-        double y = rand() / (double) RAND_MAX;
+        double x = rand_r(&seed) / (double) RAND_MAX;
+        double y = rand_r(&seed) / (double) RAND_MAX;
         if (x * x + y * y <= 1) {
             inside_circle++;
         }
