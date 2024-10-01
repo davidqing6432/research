@@ -16,7 +16,7 @@ double monteCarloIntegration(int throw_count) {
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    int seed = rank + 1; // Unique non-zero seed
+    uint32_t seed = rank + 1; // Unique non-zero seed
     int inside_per_process = 0;
     int throws_per_process = throw_count / size;
     int throws_remainder = throw_count % size;
@@ -33,7 +33,6 @@ double monteCarloIntegration(int throw_count) {
     }
     int total_inside_circle = 0;
     MPI_Reduce(&inside_per_process, &total_inside_circle, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-    MPI_Barrier(MPI_COMM_WORLD);
     if (rank == 0) {
       double pi = (double) 4.0 * total_inside_circle / throw_count;
       double end = MPI_Wtime();
@@ -41,7 +40,7 @@ double monteCarloIntegration(int throw_count) {
       printf("Monte Carlo Integration: %f\n", pi);
     }
     MPI_Finalize();
-    // return (double) 4.0 * inside_circle / THROW_COUNT;
+    return 4.0 * total_inside_circle / throw_count;
 }
 
 int main() {

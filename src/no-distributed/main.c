@@ -7,7 +7,7 @@
 // Run for extended period of time, how many processes are created.
 
 double monteCarloIntegration(int throw_count) {
-    int seed = 1;
+    uint32_t seed = 1;
     clock_t start = clock();
     int inside_circle = 0;
     for (int i = 0; i < throw_count; i++) {

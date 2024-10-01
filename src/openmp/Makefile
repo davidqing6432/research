@@ -1,5 +1,5 @@
 
-CC=gcc
+CC=gcc-14
 CFLAGS=-fopenmp
 TARGETS=main
 

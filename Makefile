@@ -44,10 +44,10 @@ openmp:
 no-distributed:
 	$(MAKE) -C src/no-distributed
 
+# $(MAKE) -C src/lf-cent clean
+# $(MAKE) -C src/lf-decent clean
+# $(MAKE) -C src/lf-unfed clean
 clean:
-	$(MAKE) -C src/lf-cent clean
-	$(MAKE) -C src/lf-decent clean
-	$(MAKE) -C src/lf-unfed clean
 	$(MAKE) -C src/mpi clean
 	$(MAKE) -C src/openmp clean
 	$(MAKE) -C src/no-distributed clean

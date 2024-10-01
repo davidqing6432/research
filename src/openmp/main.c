@@ -13,7 +13,7 @@ double monteCarloIntegration(int throw_count) {
     int inside_circle = 0;
 
     // Seed the random number generator for each thread
-    unsigned int seed;
+    uint32_t seed;
 
     // Parallelize using OpenMP with reduction to sum up the count of points inside the circle
     #pragma omp parallel private(seed) reduction(+:inside_circle)
